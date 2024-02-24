@@ -25,14 +25,14 @@ def auto_import(lib_name: str) -> CDLL:
         lib_name (str): Library name, without extensions
 
 
-        - Wrong:
+        - Wrong::
 
-        >>> auto_import('clib.so')
-        >>> auto_import('clib.cpython-311-x86_64-linux-gnu.so')
+            auto_import('clib.so')
+            auto_import('clib.cpython-311-x86_64-linux-gnu.so')
 
-        - Right:
+        - Right::
 
-        >>> auto_import('clib')
+            auto_import('clib')
 
     Raises:
         ImportError: Raise error if file not found.
