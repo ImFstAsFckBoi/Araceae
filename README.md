@@ -1,5 +1,5 @@
 # Araceae
-A collection of random, but useful, classes and function collected over a few years
+A collection of random, but useful, classes and functions collected over a few years
 
 
 ## Build and install
