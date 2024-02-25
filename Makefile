@@ -19,7 +19,7 @@ venv:
 	${PY} -m venv .venv 
 
 test:
-	python3 -m pytest araceae/ -W ignore::DeprecationWarning
+	${PY} -m pytest araceae/ -W ignore::DeprecationWarning
 
 clean:
 	rm -rf ${CLEAN_LIST}
