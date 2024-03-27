@@ -2,6 +2,7 @@ from ..vector import Vec, Vec2, Vec3, euclidean, manhattan
 from math import sqrt, cos, sin, pi
 from random import randrange
 from numpy import array
+from pytest import raises
 
 
 def test_distance_euclidean():
@@ -101,3 +102,15 @@ def test_compare():
 
     assert v == (1, 1)
     assert v != (2, 2)
+
+
+def test_immediate_op():
+    x = Vec2(0, 0)
+    assert x == (0, 0)
+    x += Vec2(1, 1)
+    assert x == (1, 1)
+    x -= (1, 1)
+    assert x == (0, 0)
+
+    with raises(AssertionError):
+        x += (1, 2, 3)

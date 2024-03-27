@@ -1,10 +1,10 @@
-from typing import Iterator, List, Tuple, Sequence, Self
+from typing import Iterator, List, Tuple, Sequence, Self, overload
 from math import sqrt
 from nptyping import NDArray
 from numpy import matmul
 
 
-class Vec:
+class Vec(Sequence[float]):
     """An Nx1 vector class, supporting common vector operations and can use
     float or integer elements
 
@@ -39,9 +39,21 @@ class Vec:
         assert r.shape == (self._size,)
         return type(self)(*r[:])
 
-    def __getitem__(self, key: int) -> float:
-        if key >= self._size: raise IndexError
-        return self._data[key]
+    @overload
+    def __getitem__(self, key: int) -> float: ...
+    @overload
+    def __getitem__(self, key: slice) -> Sequence[float]: ...
+
+    def __getitem__(self, key: int | slice) -> Sequence[float] | float:
+        if isinstance(key, int):
+            if key >= self._size: raise IndexError
+            return self._data[key]
+
+        elif isinstance(key, slice):
+            if key.stop >= self._size: raise IndexError
+            return self._data[key]
+
+        return NotImplemented
 
     def __setitem__(self, key: int, newValue: float) -> None:
         if key >= self._size: raise IndexError
@@ -56,27 +68,27 @@ class Vec:
     def __abs__(self) -> Self:
         return type(self)(*map(abs, self._data))
 
-    def __add__(self, other: Self):
-        assert self._size == other._size
+    def __add__(self, other: Sequence[float]):
+        assert self._size == len(other)
         return type(self)(*[r1 + r2 for r1, r2 in zip(self, other)])
 
-    def __sub__(self, other: Self) -> Self:
-        assert self._size == other._size
+    def __sub__(self, other: Sequence[float]) -> Self:
+        assert self._size == len(other)
         return type(self)(*[r1 - r2 for r1, r2 in zip(self, other)])
 
     def __mul__(self, mul) -> Self:
         return type(self)(*[r * mul for r in self])
 
-    def __iadd__(self, other: Self) -> Self:
-        assert self._size == other._size
-        for s, o in zip(self, other):
-            s += o
+    def __iadd__(self, other: Sequence[float]) -> Self:
+        assert self._size == len(other)
+        for i, o in enumerate(other):
+            self._data[i] += o
         return self
 
-    def __isub__(self, other: Self) -> Self:
-        assert self._size == other._size
-        for s, o in zip(self._data, other):
-            s -= o
+    def __isub__(self, other: Sequence[float]) -> Self:
+        assert self._size == len(other)
+        for i, o in enumerate(other):
+            self._data[i] -= o
         return self
 
     def __imul__(self, mul) -> Self:
@@ -118,8 +130,8 @@ class Vec:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def __contains__(self, x: float) -> bool:
-        return x in self._data
+    def __contains__(self, key: object) -> bool:
+        return key in self._data
 
     def __reversed__(self) -> Iterator[float]:
         return self._data.__reversed__()
