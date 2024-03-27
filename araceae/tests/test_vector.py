@@ -82,7 +82,7 @@ def test_matmul():
 
     assert tuple(v.matmul(M1)) == (-2, -4)
     assert tuple(u.matmul(M2)) == (-3, 6, -9)
-    assert tuple(map(round, tuple(w.matmul(M3)))) == (1, 1)
+    assert tuple(map(round, w.matmul(M3))) == (1, 1)
 
 
 def test_compare():
@@ -97,4 +97,7 @@ def test_compare():
     assert v <= w
     assert v <= u
     assert v == u
-    assert v != w
+    assert v == u
+
+    assert v == (1, 1)
+    assert v != (2, 2)

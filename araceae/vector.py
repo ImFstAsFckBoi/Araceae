@@ -1,5 +1,4 @@
-from typing import Iterator, List, Tuple
-from typing_extensions import Self
+from typing import Iterator, List, Tuple, Sequence, Self
 from math import sqrt
 from nptyping import NDArray
 from numpy import matmul
@@ -17,66 +16,66 @@ class Vec:
         x = w.euclidean()  # x = 5.0
 
     """
-    __size: int
-    __data: List[float]
+    _size: int
+    _data: List[float]
     __count = 0  # Only used for iteration
 
     def __init__(self, *rows: float) -> None:
-        self.__size = len(rows)
-        self.__data = [*rows]
+        self._size = len(rows)
+        self._data = [*rows]
 
     def euclidean(self) -> float:
         return sqrt(sum(map(lambda x: x**2, self)))
 
     def manhattan(self) -> float:
-        return sum(map(abs, self.__data))
+        return sum(map(abs, self._data))
 
     def as_int_t(self) -> Tuple[int, ...]:
-        return tuple(map(int, self.__data))
+        return tuple(map(int, self._data))
 
     def matmul(self, matrix: NDArray) -> Self:
-        assert matrix.shape == (self.__size, self.__size)
-        r = matmul(self.__data, matrix)
-        assert r.shape == (self.__size,)
+        assert matrix.shape == (self._size, self._size)
+        r = matmul(self._data, matrix)
+        assert r.shape == (self._size,)
         return type(self)(*r[:])
 
     def __getitem__(self, key: int) -> float:
-        if key >= self.__size: raise IndexError
-        return self.__data[key]
+        if key >= self._size: raise IndexError
+        return self._data[key]
 
     def __setitem__(self, key: int, newValue: float) -> None:
-        if key >= self.__size: raise IndexError
-        self.__data[key] = newValue
+        if key >= self._size: raise IndexError
+        self._data[key] = newValue
 
     def __len__(self) -> int:
-        return self.__size
+        return self._size
 
     def __iter__(self) -> Iterator[float]:
-        return iter(self.__data)
+        return iter(self._data)
 
     def __abs__(self) -> Self:
-        return type(self)(*map(abs, self.__data))
+        return type(self)(*map(abs, self._data))
 
     def __add__(self, other: Self):
-        assert self.__size == other.__size
+        assert self._size == other._size
         return type(self)(*[r1 + r2 for r1, r2 in zip(self, other)])
 
     def __sub__(self, other: Self) -> Self:
-        assert self.__size == other.__size
+        assert self._size == other._size
         return type(self)(*[r1 - r2 for r1, r2 in zip(self, other)])
 
     def __mul__(self, mul) -> Self:
         return type(self)(*[r * mul for r in self])
 
     def __iadd__(self, other: Self) -> Self:
-        assert self.__size == other.__size
+        assert self._size == other._size
         for s, o in zip(self, other):
             s += o
         return self
 
     def __isub__(self, other: Self) -> Self:
-        assert self.__size == other.__size
-        for s, o in zip(self.__data, other):
+        assert self._size == other._size
+        for s, o in zip(self._data, other):
             s -= o
         return self
 
@@ -85,35 +84,45 @@ class Vec:
             s *= mul
         return self
 
-    def __lt__(self, other: 'Vec') -> bool:
-        assert self.__size == other.__size
+    def __lt__(self, other: Self) -> bool:
+        assert self._size == other._size
         return self.euclidean() < other.euclidean()
 
-    def __le__(self, other: 'Vec') -> bool:
-        assert self.__size == other.__size
+    def __le__(self, other: Self) -> bool:
+        assert self._size == other._size
         return self.euclidean() <= other.euclidean()
 
-    def __gt__(self, other: 'Vec') -> bool:
-        assert self.__size == other.__size
+    def __gt__(self, other: Self) -> bool:
+        assert self._size == other._size
         return self.euclidean() > other.euclidean()
 
-    def __ge__(self, other: 'Vec') -> bool:
-        assert self.__size == other.__size
+    def __ge__(self, other: Self) -> bool:
+        assert self._size == other._size
         return self.euclidean() >= other.euclidean()
 
-    def __eq__(self, other: 'Vec') -> bool:
-        assert self.__size == other.__size
-        return sum(map(lambda so: so[0] == so[1], zip(self, other))) != 0
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, (Vec, Sequence)):
+            assert self._size == len(other)
+            return sum(map(lambda so: so[0] == so[1], zip(self, other))) != 0
+        return NotImplemented
 
-    def __ne__(self, other: 'Vec') -> bool:
-        assert self.__size == other.__size
-        return sum(map(lambda so: so[0] == so[1], zip(self, other))) == 0
+    def __ne__(self, other: object) -> bool:
+        if isinstance(other, (Vec, Sequence)):
+            assert self._size == len(other)
+            return sum(map(lambda so: so[0] == so[1], zip(self, other))) == 0
+        return NotImplemented
 
     def __str__(self) -> str:
-        return f'Vec{str(self.__data)}'
+        return f'Vec{str(self._data)}'
 
     def __repr__(self) -> str:
         return self.__str__()
+
+    def __contains__(self, x: float) -> bool:
+        return x in self._data
+
+    def __reversed__(self) -> Iterator[float]:
+        return self._data.__reversed__()
 
 
 class Vec2(Vec):
@@ -123,10 +132,10 @@ class Vec2(Vec):
         super().__init__(x, y)
 
     @property
-    def x(self) -> float: return self.__data[0]
+    def x(self) -> float: return self._data[0]
 
     @property
-    def y(self) -> float: return self.__data[1]
+    def y(self) -> float: return self._data[1]
 
 
 class Vec3(Vec):
