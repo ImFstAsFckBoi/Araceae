@@ -1,9 +1,10 @@
-from ..misc import s_to_xs, timer
+from pytest import CaptureFixture
+from ..testing.time import s_to_xs, timer
 from time import sleep
 from typing import Tuple, List
 
 
-def test_s_to_xs():
+def test_s_to_xs() -> None:
     def _test(v: float, e: Tuple[float, str]):
         r = s_to_xs(v)
         if r[0] >= 1:
@@ -36,7 +37,7 @@ def test_s_to_xs():
         _test(v, e)
 
 
-def test_timer(capsys):
+def test_timer(capsys: CaptureFixture[str]):
     with timer('Test1', 0, timer.MODE_DELTA) as _:
         sleep(1)
 
