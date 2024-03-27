@@ -10,6 +10,11 @@ make build
 pip install dist/araceae<...>.whl
 ```
 
+or install from newest commit
+```shell
+pip install 'git+https://github.com/ImFstAsFckBoi/araceae'
+```
+
 ## Develop
 ```shell
 make venv
