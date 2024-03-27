@@ -7,22 +7,23 @@ reading image frames from different video sources.
 
 import cv2
 from nptyping import NDArray
+from typing import Protocol
 
 
 class LastFrameException(Exception):
     ...
 
 
-class vccommon:
+class vccommon(Protocol):
     """Base class for the VC api."""
     def __init__(self):
         """Initialize the video resource."""
-        raise NotImplementedError()
+    ...
 
     def read(self) -> NDArray:
         """Read one frame from the video source.
         When frames are exhausted, a LatFrameException will be raised."""
-        raise NotImplementedError()
+        ...
 
     def __del__(self):
         """Release the video resource"""
