@@ -89,7 +89,7 @@ class RefChain(Generic[_T2]):
         return c
 
     def move_end(self, next: 'RefChain[_T2]') -> None:
-        assert self is next
+        assert self is not next
         end = self.get_end()
         end._value = None
         end._next = next
