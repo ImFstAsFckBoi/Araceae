@@ -156,6 +156,15 @@ class Vec3(Vec):
     def __init__(self, x: float, y: float, z: float) -> None:
         super().__init__(x, y, z)
 
+    @property
+    def x(self) -> float: return self._data[0]
+
+    @property
+    def y(self) -> float: return self._data[1]
+
+    @property
+    def z(self) -> float: return self._data[2]
+
 
 def euclidean(a: Vec, b: 'Vec') -> float:
     "Euclidean distance between two points"
