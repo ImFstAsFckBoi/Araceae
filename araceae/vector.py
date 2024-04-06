@@ -1,7 +1,8 @@
-from typing import Iterator, List, Tuple, Sequence, Self, overload
-from math import sqrt
+from typing import Iterator, Tuple, Sequence, overload
+from typing_extensions import Self
+from math import sqrt, sin, cos
 from nptyping import NDArray
-from numpy import matmul
+import numpy as np
 
 
 class Vec(Sequence[float]):
@@ -17,27 +18,26 @@ class Vec(Sequence[float]):
 
     """
     _size: int
-    _data: List[float]
-    __count = 0  # Only used for iteration
+    _data: NDArray
 
     def __init__(self, *rows: float) -> None:
         self._size = len(rows)
-        self._data = [*rows]
+        self._data = np.array(rows, dtype=np.float64, copy=True)
 
     def euclidean(self) -> float:
-        return sqrt(sum(map(lambda x: x**2, self)))
+        return sqrt(np.sum(self._data ** 2))
 
     def manhattan(self) -> float:
-        return sum(map(abs, self._data))
+        return np.sum(np.abs(self._data))
 
     def as_int_t(self) -> Tuple[int, ...]:
         return tuple(map(int, self._data))
 
     def matmul(self, matrix: NDArray) -> Self:
         assert matrix.shape == (self._size, self._size)
-        r = matmul(self._data, matrix)
+        r = np.matmul(self._data, matrix)
         assert r.shape == (self._size,)
-        return type(self)(*r[:])
+        return type(self)(*r)
 
     @overload
     def __getitem__(self, key: int) -> float: ...
@@ -51,7 +51,7 @@ class Vec(Sequence[float]):
 
         elif isinstance(key, slice):
             if key.stop >= self._size: raise IndexError
-            return self._data[key]
+            return list(self._data[key])
 
         return NotImplemented
 
@@ -70,30 +70,27 @@ class Vec(Sequence[float]):
 
     def __add__(self, other: Sequence[float]):
         assert self._size == len(other)
-        return type(self)(*[r1 + r2 for r1, r2 in zip(self, other)])
+        return type(self)(*(self._data + other))
 
     def __sub__(self, other: Sequence[float]) -> Self:
         assert self._size == len(other)
-        return type(self)(*[r1 - r2 for r1, r2 in zip(self, other)])
+        return type(self)(*(self._data - other))
 
-    def __mul__(self, mul) -> Self:
-        return type(self)(*[r * mul for r in self])
+    def __mul__(self, mul: float) -> Self:
+        return type(self)(*(self._data * mul))
 
     def __iadd__(self, other: Sequence[float]) -> Self:
         assert self._size == len(other)
-        for i, o in enumerate(other):
-            self._data[i] += o
+        self._data += other
         return self
 
     def __isub__(self, other: Sequence[float]) -> Self:
         assert self._size == len(other)
-        for i, o in enumerate(other):
-            self._data[i] -= o
+        self._data -= other
         return self
 
-    def __imul__(self, mul) -> Self:
-        for s in self:
-            s *= mul
+    def __imul__(self, mul: float) -> Self:
+        self._data *= mul
         return self
 
     def __lt__(self, other: Self) -> bool:
@@ -115,13 +112,13 @@ class Vec(Sequence[float]):
     def __eq__(self, other: object) -> bool:
         if isinstance(other, (Vec, Sequence)):
             assert self._size == len(other)
-            return sum(map(lambda so: so[0] == so[1], zip(self, other))) != 0
+            return np.array_equal(self, other)
         return NotImplemented
 
     def __ne__(self, other: object) -> bool:
-        if isinstance(other, (Vec, Sequence)):
+        if isinstance(other, (Vec)):
             assert self._size == len(other)
-            return sum(map(lambda so: so[0] == so[1], zip(self, other))) == 0
+            return not np.array_equal(self, other)
         return NotImplemented
 
     def __str__(self) -> str:
@@ -134,7 +131,7 @@ class Vec(Sequence[float]):
         return key in self._data
 
     def __reversed__(self) -> Iterator[float]:
-        return self._data.__reversed__()
+        return reversed(self._data)
 
 
 class Vec2(Vec):
@@ -174,6 +171,11 @@ def euclidean(a: Vec, b: 'Vec') -> float:
 def manhattan(a: Vec, b: 'Vec') -> float:
     "Manhattan distance between two points"
     return sum(map(lambda ab: abs(ab[0] - ab[1]), zip(a, b)))
+
+
+def rotation_matrix(rads: float) -> NDArray:
+    return np.array([[cos(rads), -sin(rads)],
+                     [sin(rads), cos(rads)]], dtype=float)
 
 
 Point2 = Dim = Vec2

@@ -1,5 +1,12 @@
-from araceae.vector import Vec, Vec2, Vec3, euclidean, manhattan
-from math import sqrt, cos, sin, pi
+from araceae.vector import (
+    Vec,
+    Vec2,
+    Vec3,
+    euclidean,
+    manhattan,
+    rotation_matrix
+)
+from math import sqrt, pi
 from random import randrange
 from numpy import array
 from pytest import raises
@@ -78,11 +85,10 @@ def test_matmul():
                 [0, 3, 0],
                 [0, 0, -3]])
 
-    M3 = array([[cos(-pi/4), -sin(-pi/4)],
-                [sin(-pi/4), cos(-pi/4)]]) * (2/sqrt(2))
+    M3 = rotation_matrix(-pi/4)
 
-    assert tuple(v.matmul(M1)) == (-2, -4)
-    assert tuple(u.matmul(M2)) == (-3, 6, -9)
+    assert v.matmul(M1) == (-2, -4)
+    assert u.matmul(M2) == (-3, 6, -9)
     assert tuple(map(round, w.matmul(M3))) == (1, 1)
 
 
@@ -104,19 +110,43 @@ def test_compare():
     assert v != (2, 2)
 
 
-def test_immediate_op():
-    x = Vec2(0, 0)
-    assert x == (0, 0)
-    x += Vec2(1, 1)
-    assert x == (1, 1)
-    x -= (1, 1)
-    assert x == (0, 0)
+def test_ops():
+    v = Vec2(1, 1)
+    assert v == (1, 1)
+    v = v * 2
+    assert v == (2, 2)
+    v = v + (2, 0)
+    assert v == (4, 2)
+    v = v - (0, 2)
+    assert v == (4, 0)
 
     with raises(AssertionError):
-        x += (1, 2, 3)
+        _ = v + (1, 2, 3)
+
+
+def test_immediate_op():
+    v = Vec2(1, 1)
+    assert v == (1, 1)
+    v *= 2
+    assert v == (2, 2)
+    v += (2, 0)
+    assert v == (4, 2)
+    v -= (0, 2)
+    assert v == (4, 0)
+
+    with raises(AssertionError):
+        v += (1, 2, 3)
 
 
 def test_reverse():
     v = reversed(Vec(1, 2, 3, 4, 5))
     for i, j in zip(v, (5, 4, 3, 2, 1)):
         assert i == j
+
+
+def test_contains():
+    v = Vec3(1, 2, 3)
+    assert 1 in v
+    assert 2 in v
+    assert 3 in v
+    assert 4 not in v
