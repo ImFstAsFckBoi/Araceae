@@ -1,4 +1,4 @@
-from ..signal import FlankDetector as FD, SMAFilter, FIRFilter
+from araceae.signal import FlankDetector as FD, SMAFilter, FIRFilter
 from pytest import raises
 from numpy import array
 

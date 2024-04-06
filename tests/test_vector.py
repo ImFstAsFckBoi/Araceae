@@ -1,4 +1,4 @@
-from ..vector import Vec, Vec2, Vec3, euclidean, manhattan
+from araceae.vector import Vec, Vec2, Vec3, euclidean, manhattan
 from math import sqrt, cos, sin, pi
 from random import randrange
 from numpy import array
@@ -114,3 +114,9 @@ def test_immediate_op():
 
     with raises(AssertionError):
         x += (1, 2, 3)
+
+
+def test_reverse():
+    v = reversed(Vec(1, 2, 3, 4, 5))
+    for i, j in zip(v, (5, 4, 3, 2, 1)):
+        assert i == j

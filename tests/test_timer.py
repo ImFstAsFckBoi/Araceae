@@ -1,5 +1,5 @@
 from pytest import CaptureFixture
-from ..testing.time import s_to_xs, timer
+from araceae.testing.time import s_to_xs, timer
 from time import sleep
 from typing import Tuple, List
 

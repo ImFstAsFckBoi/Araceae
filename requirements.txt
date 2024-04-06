@@ -1,3 +1,4 @@
 opencv-python
 numpy
 nptyping
+typing_extensions
