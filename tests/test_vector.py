@@ -1,15 +1,15 @@
-from araceae.vector import (
+from math import sqrt, pi
+from random import randrange
+from numpy import array
+from pytest import raises
+from araceae.types import (
     Vec,
     Vec2,
     Vec3,
     euclidean,
     manhattan,
-    rotation_matrix
+    rotation_matrix,
 )
-from math import sqrt, pi
-from random import randrange
-from numpy import array
-from pytest import raises
 
 
 def test_distance_euclidean():
@@ -53,13 +53,13 @@ def test_diff_distance():
     a = Vec3(-1, -1, -1)
     b = Vec3(2, 2, 2)
 
-    assert euclidean(a, b) == 3*sqrt(3)
+    assert euclidean(a, b) == 3 * sqrt(3)
     assert manhattan(a, b) == 9
 
     u = Vec2(1, 6)
     v = Vec2(5, 2)
 
-    assert euclidean(u, v) == 4*sqrt(2)
+    assert euclidean(u, v) == 4 * sqrt(2)
     assert manhattan(u, v) == 8
 
 
@@ -78,14 +78,11 @@ def test_matmul():
     u = Vec3(1, 2, 3)
     w = Vec2(1, 0)
 
-    M1 = array([[-2, 0],
-                [0, -2]])
+    M1 = array([[-2, 0], [0, -2]])
 
-    M2 = array([[-3, 0, 0],
-                [0, 3, 0],
-                [0, 0, -3]])
+    M2 = array([[-3, 0, 0], [0, 3, 0], [0, 0, -3]])
 
-    M3 = rotation_matrix(-pi/4)
+    M3 = rotation_matrix(-pi / 4)
 
     assert v.matmul(M1) == (-2, -4)
     assert u.matmul(M2) == (-3, 6, -9)

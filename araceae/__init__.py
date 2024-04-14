@@ -1,9 +1,1 @@
-from . import (  # noqa: F401
-    calculus,
-    console,
-    ec_import,
-    misc,
-    result,
-    signal,
-    vcwrapper,
-)
+from araceae import *  # noqa: F401, F403

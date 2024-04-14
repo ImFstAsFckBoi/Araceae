@@ -1,5 +1,5 @@
 from pytest import raises
-from araceae.result import Result, Ok, Err, or_err
+from araceae.types.result import Result, Ok, Err, or_err
 from typing import runtime_checkable, Protocol
 
 

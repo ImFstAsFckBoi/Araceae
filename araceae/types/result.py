@@ -13,7 +13,7 @@ class Result(Generic[T], Protocol):
 
     def or_raise(
         self,
-        exc: Exception | type[Exception] = ...,  # noqa: E501
+        exc: Exception | type[Exception] = ...,
     ) -> T:
         """Get the value or raise the `exc` exception if the Result is Err"""
         ...

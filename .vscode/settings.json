@@ -9,6 +9,7 @@
         "picamera",
         "pycache",
         "pytest",
+        "refchain",
         "vccamera",
         "vccommon",
         "vcfile",
